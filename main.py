@@ -84,12 +84,8 @@ def soma_contas()-> float:
 
 
 
-
-
-
-
 def salvar_contas()-> None:
-    # Lógica para salvar as contas (positivas e negativas)
+    # Lógica para salvar as contas cadastradas pelo usuario(perfil)
     raise NotImplementedError
 
 
