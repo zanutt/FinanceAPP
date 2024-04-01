@@ -1,6 +1,12 @@
 #funcoes basicas
-dividas = {}
-proventos = {}
+dividas = {
+    "cartao": 1500,
+    "tv": 2000,
+    "smartphone": 800.76,
+}
+proventos = {
+    "salario": 7500,
+}
 def menu()-> None:
     #Menu Principal da aplicação mais para frente sera um GUI para melhor usabilidade
     while True:
@@ -65,9 +71,21 @@ def deletar_provento()-> None:
         raise  ValueError('O provento não foi encontrada.')
 
 
-def soma_contas()-> None:
+def soma_contas()-> float:
     # Lógica para modificar uma dívida ou entrada de provento existente
-    raise NotImplementedError
+    valor_dividas = []
+    valor_proventos= []
+    for v in dividas:
+        valor_dividas.append(dividas[v])
+    for v in proventos:
+        valor_proventos.append(proventos[v])
+
+    return (sum(valor_proventos) - sum(valor_dividas))
+
+
+
+
+
 
 
 def salvar_contas()-> None:
@@ -84,5 +102,5 @@ def definir_metas()-> None:
 
 
 if __name__ == '__main__':    
-    menu()
+    print (soma_contas())
     print (dividas)
