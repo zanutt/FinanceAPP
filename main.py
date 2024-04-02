@@ -85,8 +85,18 @@ def soma_contas()-> float:
 
 
 def salvar_contas()-> None:
-    # Lógica para salvar as contas cadastradas pelo usuario(perfil)
-    raise NotImplementedError
+    # Salvar os dados, mudar para CSV?
+    with open ('Perfis.txt', 'w') as arq:
+        arq.write('\nDividas:\n')
+        for k, v in dividas.items():
+            arq.write(f'{k}: {v}\n')
+        
+        arq.write('\nProventos:\n')
+        for k, v in proventos.items():
+            arq.write(f'{k}: {v}\n')            
+        arq.close
+        
+    
 
 
 def definir_metas()-> None:
@@ -100,3 +110,4 @@ def definir_metas()-> None:
 if __name__ == '__main__':    
     print (soma_contas())
     print (dividas)
+    salvar_contas()
