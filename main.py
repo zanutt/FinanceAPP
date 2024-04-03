@@ -7,6 +7,7 @@ dividas = {
 proventos = {
     "salario": 7500,
 }
+
 def menu()-> None:
     #Menu Principal da aplicação mais para frente sera um GUI para melhor usabilidade
     while True:
@@ -48,9 +49,9 @@ def menu()-> None:
                                 [1]: Mostrar Dividas\n
                                 [2]: Mostrar Proventos\n""")
             if opcao_mostrar == '1':
-                mostrar_divida()
+                mostrar_dividas()
             elif opcao_mostrar == '2':
-                mostrar_provento()
+                mostrar_proventos()
             else:
                 print("Opção invalida")
                 continue
