@@ -10,16 +10,55 @@ proventos = {
 def menu()-> None:
     #Menu Principal da aplicação mais para frente sera um GUI para melhor usabilidade
     while True:
-        op = input("Bem vindo ao App de Finanças digite a opção desejada\n1: Adciona divida\n2: Adciona provento\n 3: Deleta Divida\n 4: Deleta provento\nSair: para sair\n")
-        if op == '1':
-            criar_divida()
-        elif op == '2':
-            criar_provento()
-        elif op == '3':
-            deletar_divida()
-        elif op == '4':
-            deletar_provento()
-        elif op == 'sair':
+        opcao = input("""Bem vindo ao App de Finanças digite a opcaoção desejada\n
+                   [1]: Adciona Divida/Receita\n
+                   [2]: Deleta Divida/Provento\n
+                   [3]: Mostrar Divida/Provento\n
+                   [4]: Mostar Resumo das finanças\n
+                   [5]: para sair\n""")
+        if opcao == '1':
+            opcao_criar = input("""Selecione a opção\n
+                                [1]: Adcionar Divida\n
+                                [2]: Adicionar Provento\n""")
+            if opcao_criar == '1':
+                criar_divida()
+            elif opcao_criar == '2':
+                criar_provento()
+            else:
+                print("Opção invalida")
+                continue
+
+
+        elif opcao == '2':
+            opcao_delete = input("""Selecione a opção\n
+                                [1]: Deletar Divida\n
+                                [2]: Deletar Provento\n""")
+            if opcao_delete == '1':
+                deletar_divida()
+            elif opcao_delete == '2':
+                deletar_provento()
+            else:
+                print("Opção invalida")
+                continue
+            
+
+            
+        elif opcao == '3':
+            opcao_mostrar = input("""Selecione a opção\n
+                                [1]: Mostrar Dividas\n
+                                [2]: Mostrar Proventos\n""")
+            if opcao_mostrar == '1':
+                mostrar_divida()
+            elif opcao_mostrar == '2':
+                mostrar_provento()
+            else:
+                print("Opção invalida")
+                continue
+
+        elif opcao == '4':
+            soma_contas() 
+
+        elif opcao == '5':
             break
 
     
@@ -29,6 +68,7 @@ def criar_divida() -> None:
     nome_divida = input("Nome da divida (ex.: Cartão): ")
     if dividas.get(nome_divida) is None:
         dividas[nome_divida] = valor_divida
+        print(f"Divida {nome_divida} criada")
         
     else:
         print("\nJá existe uma divida com esse nome.")
@@ -108,6 +148,4 @@ def definir_metas()-> None:
 
 
 if __name__ == '__main__':    
-    print (soma_contas())
-    print (dividas)
-    salvar_contas()
+    menu()
