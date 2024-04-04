@@ -1,152 +1,122 @@
-#funcoes basicas
-dividas = {
-    "cartao": 1500,
-    "tv": 2000,
-    "smartphone": 800.76,
-}
-proventos = {
-    "salario": 7500,
-}
+class Divida:
+    def __init__(self, nome, valor):
+        self.nome = nome
+        self.valor = valor
 
-def menu()-> None:
-    #Menu Principal da aplicação mais para frente sera um GUI para melhor usabilidade
+class Provento:
+    def __init__(self, nome, valor):
+        self.nome = nome
+        self.valor = valor
+
+class Financas:
+    def __init__(self):
+        self.dividas = []
+        self.proventos = []
+
+    def adicionar_divida(self, nome, valor):
+        self.dividas.append(Divida(nome, valor))
+
+    def adicionar_provento(self, nome, valor):
+        self.proventos.append(Provento(nome, valor))
+
+    def mostrar_dividas(self):
+        for divida in self.dividas:
+            print(f"{divida.nome}: R${divida.valor}")
+
+    def mostrar_proventos(self):
+        for provento in self.proventos:
+            print(f"{provento.nome}: R${provento.valor}")
+
+    def deletar_divida(self, nome):
+        for divida in self.dividas:
+            if divida.nome == nome:
+                self.dividas.remove(divida)
+                print(f"Divida {nome} deletada.")
+                return
+        print("Divida não encontrada.")
+
+    def deletar_provento(self, nome):
+        for provento in self.proventos:
+            if provento.nome == nome:
+                self.proventos.remove(provento)
+                print(f"Provento {nome} deletado.")
+                return
+        print("Provento não encontrado.")
+
+    def calcular_saldo(self):
+        saldo = sum(provento.valor for provento in self.proventos) - sum(divida.valor for divida in self.dividas)
+        return saldo
+    
+    ## Mudarei pra SQL
+    def salvar_contas(self):
+        with open('Perfis.txt', 'w') as arq:
+            arq.write('Dividas:\n')
+            for divida in self.dividas:
+                arq.write(f"{divida.nome}: {divida.valor}\n")
+            arq.write('\nProventos:\n')
+            for provento in self.proventos:
+                arq.write(f"{provento.nome}: {provento.valor}\n")
+    ## Metas financeiras função futura
+    def definir_metas(self):
+        pass
+    
+
+def menu(financeiro):
     while True:
-        opcao = input("""Bem vindo ao App de Finanças digite a opcaoção desejada\n
-                   [1]: Adciona Divida/Receita\n
-                   [2]: Deleta Divida/Provento\n
-                   [3]: Mostrar Divida/Provento\n
-                   [4]: Mostar Resumo das finanças\n
-                   [5]: para sair\n""")
+        opcao = input("""Bem vindo ao App de Finanças. Selecione a opção desejada:
+            [1] Adicionar Divida/Provento
+            [2] Deletar Divida/Provento
+            [3] Mostrar Divida/Provento
+            [4] Mostrar Resumo das Finanças
+            [5] Salvar Contas
+            [6] Definir Metas Financeiras
+            [7] Sair\n""")
         if opcao == '1':
-            opcao_criar = input("""Selecione a opção\n
-                                [1]: Adcionar Divida\n
-                                [2]: Adicionar Provento\n""")
+            opcao_criar = input("""Selecione a opção:
+                                [1] Adicionar Divida
+                                [2] Adicionar Provento\n""")
             if opcao_criar == '1':
-                criar_divida()
+                nome_divida = input("Nome da divida: ")
+                valor_divida = float(input("Valor da divida: R$"))
+                financeiro.adicionar_divida(nome_divida, valor_divida)
             elif opcao_criar == '2':
-                criar_provento()
-            else:
-                print("Opção invalida")
-                continue
-
+                nome_provento = input("Nome do provento: ")
+                valor_provento = float(input("Valor do provento: R$"))
+                financeiro.adicionar_provento(nome_provento, valor_provento)
 
         elif opcao == '2':
-            opcao_delete = input("""Selecione a opção\n
-                                [1]: Deletar Divida\n
-                                [2]: Deletar Provento\n""")
+            opcao_delete = input("""Selecione a opção:
+                                [1] Deletar Divida
+                                [2] Deletar Provento\n""")
             if opcao_delete == '1':
-                deletar_divida()
+                nome_divida = input("Nome da divida a ser deletada: ")
+                financeiro.deletar_divida(nome_divida)
             elif opcao_delete == '2':
-                deletar_provento()
-            else:
-                print("Opção invalida")
-                continue
-            
+                nome_provento = input("Nome do provento a ser deletado: ")
+                financeiro.deletar_provento(nome_provento)
 
-            
         elif opcao == '3':
-            opcao_mostrar = input("""Selecione a opção\n
-                                [1]: Mostrar Dividas\n
-                                [2]: Mostrar Proventos\n""")
+            opcao_mostrar = input("""Selecione a opção:
+                                [1] Mostrar Dividas
+                                [2] Mostrar Proventos\n""")
             if opcao_mostrar == '1':
-                mostrar_dividas()
+                financeiro.mostrar_dividas()
             elif opcao_mostrar == '2':
-                mostrar_proventos()
-            else:
-                print("Opção invalida")
-                continue
+                financeiro.mostrar_proventos()
 
         elif opcao == '4':
-            soma_contas() 
+            print(f"Saldo: R${financeiro.calcular_saldo()}")
 
         elif opcao == '5':
+            financeiro.salvar_contas()
+
+        elif opcao == '6':
+            financeiro.definir_metas()
+
+        elif opcao == '7':
             break
 
-    
-def criar_divida() -> None:
-    # Lógica para criar uma nova dívida
-    valor_divida = float(input("Digite o valor da divida: R$"))
-    nome_divida = input("Nome da divida (ex.: Cartão): ")
-    if dividas.get(nome_divida) is None:
-        dividas[nome_divida] = valor_divida
-        print(f"Divida {nome_divida} criada")
-        
-    else:
-        print("\nJá existe uma divida com esse nome.")
-    
-def mostrar_dividas () -> None:
-    # Lógica para mostrar a lista ordenada de dividas
-    print(dividas)
 
-
-def criar_provento()-> None:
-    # Lógica para criar uma nova entrada de provento
-    valor_liquido = float(input("Digite o valor do provento: R$"))
-    nome_provento = input("Nome do provento (ex.: Salário): ")
-    if proventos.get(nome_provento) is None:
-        proventos[nome_provento] = valor_liquido
-        
-    else:
-        print("\nJá existe um provento com esse nome.")
-
-def mostrar_proventos () -> None:
-    # Lógica para mostrar a lista ordenada de dividas
-    print(proventos)
-
-def deletar_divida()-> None:
-    # Lógica para excluir uma dívida
-    nome_divida = input("Qual o nome da divida que voce quer excluir?")
-    if dividas.get(nome_divida) != None:
-        del dividas[nome_divida]
-        print('\nDivida apagada!')
-    else:
-        raise  ValueError('A divida não foi encontrada.')
-    
-def deletar_provento()-> None:
-    # Lógica para excluir uma entrada de provento
-    nome_provento = input("Qual o nome do provento que voce quer excluir?")
-    if proventos.get(nome_provento) != None:
-        del proventos[nome_provento]
-        print('\nDivida apagada!')
-    else:
-        raise  ValueError('O provento não foi encontrada.')
-
-
-def soma_contas()-> float:
-    # Lógica para modificar uma dívida ou entrada de provento existente
-    valor_dividas = []
-    valor_proventos= []
-    for v in dividas:
-        valor_dividas.append(dividas[v])
-    for v in proventos:
-        valor_proventos.append(proventos[v])
-
-    return (sum(valor_proventos) - sum(valor_dividas))
-
-
-
-def salvar_contas()-> None:
-    # Salvar os dados, mudar para CSV?
-    with open ('Perfis.txt', 'w') as arq:
-        arq.write('\nDividas:\n')
-        for k, v in dividas.items():
-            arq.write(f'{k}: {v}\n')
-        
-        arq.write('\nProventos:\n')
-        for k, v in proventos.items():
-            arq.write(f'{k}: {v}\n')            
-        arq.close
-        
-    
-
-
-def definir_metas()-> None:
-    # Lógica para definir metas financeiras
-    raise NotImplementedError
-
-
-
-
-
-if __name__ == '__main__':    
-    menu()
+if __name__ == '__main__':
+    financeiro = Financas()
+    menu(financeiro)
