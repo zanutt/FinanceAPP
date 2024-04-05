@@ -1,23 +1,52 @@
+## SQL Db
+import psycopg2
+## Iniciando a conexão com a DB
+conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres", password="123456", port = 5432)
+cur = conn.cursor()
+
+## iniciando  o banco de dados se não existir, criar um novo banco de dados.
+cur.execute("""CREATE TABLE IF NOT EXISTS finances(
+            id BIGSERIAL PRIMARY KEY,
+            nome VARCHAR (255),
+            valor INT,
+            categoria VARCHAR(50),
+            finance_id INT,
+            data DATE
+);
+""")
+conn.commit()
+cur.close()
+conn.close()
+
+
+
+
 class Divida:
-    def __init__(self, nome, valor):
+    def __init__(self, nome, valor, categoria, finance_id, data):
         self.nome = nome
         self.valor = valor
+        self.categoria = categoria
+        self.finance_id = finance_id
+        self.data = data
 
 class Provento:
-    def __init__(self, nome, valor):
+    def __init__(self, nome, valor, categoria, finance_id, data):
         self.nome = nome
         self.valor = valor
+        self.categoria = categoria
+        self.finance_id = finance_id
+        self.data = data
 
 class Financas:
     def __init__(self):
         self.dividas = []
         self.proventos = []
 
-    def adicionar_divida(self, nome, valor):
-        self.dividas.append(Divida(nome, valor))
+    def adicionar_divida(self, nome, valor, categoria, finance_id, data):
+        self.dividas.append(Divida(nome, valor, categoria, finance_id, data))
 
-    def adicionar_provento(self, nome, valor):
-        self.proventos.append(Provento(nome, valor))
+    def adicionar_provento(self, nome, valor, categoria, finance_id, data):
+        self.proventos.append(Provento(nome, valor, categoria, finance_id, data))
 
     def mostrar_dividas(self):
         for divida in self.dividas:
@@ -78,11 +107,17 @@ def menu(financeiro):
             if opcao_criar == '1':
                 nome_divida = input("Nome da divida: ")
                 valor_divida = float(input("Valor da divida: R$"))
-                financeiro.adicionar_divida(nome_divida, valor_divida)
+                categoria_divida = input("Categoria da Divida: ")
+                f_id = 1
+                divida_vencimento = input("Data de Vencimento (DD/MM/AAAA): ")                
+                financeiro.adicionar_divida(nome_divida, valor_divida, categoria_divida, f_id, divida_vencimento)
             elif opcao_criar == '2':
                 nome_provento = input("Nome do provento: ")
                 valor_provento = float(input("Valor do provento: R$"))
-                financeiro.adicionar_provento(nome_provento, valor_provento)
+                categoria_provento = input("Categoria do provento: ")
+                f_id = 2
+                provento_vencimento = input("Data de Vencimento (DD/MM/AAAA): ")  
+                financeiro.adicionar_provento(nome_provento, valor_provento, categoria_provento, f_id, provento_vencimento)
 
         elif opcao == '2':
             opcao_delete = input("""Selecione a opção:
