@@ -14,9 +14,10 @@ cur.execute("""CREATE TABLE IF NOT EXISTS finances(
             data DATE
 );
 """)
-conn.commit()
-cur.close()
-conn.close()
+        ##conn.commit()
+        ##cur.close()
+        ##conn.close()
+
 
 
 
@@ -42,49 +43,74 @@ class Financas:
         self.dividas = []
         self.proventos = []
 
-    def adicionar_divida(self, nome, valor, categoria, finance_id, data):
-        self.dividas.append(Divida(nome, valor, categoria, finance_id, data))
 
-    def adicionar_provento(self, nome, valor, categoria, finance_id, data):
-        self.proventos.append(Provento(nome, valor, categoria, finance_id, data))
+    def adicionar_divida(self, nome, valor, categoria, data, finance_id=1):
+        try:
+            cur.execute('INSERT INTO finances VALUES (DEFAULT, %s, %s, %s, %s, %s)',
+                        (nome, valor, categoria, finance_id, data))
+            conn.commit()
+        except Exception as e:
+            print("Error:", e)
+            conn.rollback()  
+        finally:
+            pass
 
-    def mostrar_dividas(self):
-        for divida in self.dividas:
-            print(f"{divida.nome}: R${divida.valor}")
+    def adicionar_provento(self, nome, valor, categoria, data, finance_id=2):
+        try:
+            cur.execute('INSERT INTO finances VALUES (DEFAULT, %s, %s, %s, %s, %s)',
+                        (nome, valor, categoria, finance_id, data))
+            conn.commit()
+        except Exception as e:
+            print("Error:", e)
+            conn.rollback()  
+        finally:
+            pass
+        
+    def mostrar_dividas(self, finance_id=1):
+        # Execute a consulta SQL para dívidas com base no finance_id
+        cur.execute("SELECT * FROM finances WHERE finance_id = %s AND categoria = 'divida'", (finance_id,))
+        # Recupere os resultados
+        dividas = cur.fetchall()
+        # Imprima os resultados
+        for divida in dividas:
+            print(divida)
 
-    def mostrar_proventos(self):
-        for provento in self.proventos:
-            print(f"{provento.nome}: R${provento.valor}")
+    def mostrar_proventos(self, finance_id=2):
+        # Execute a consulta SQL para proventos com base no finance_id
+        cur.execute("SELECT * FROM finances WHERE finance_id = %s AND categoria = 'provento'", (finance_id,))
+        # Recupere os resultados
+        proventos = cur.fetchall()
+        # Imprima os resultados
+        for provento in proventos:
+            print(provento)
 
-    def deletar_divida(self, nome):
-        for divida in self.dividas:
-            if divida.nome == nome:
-                self.dividas.remove(divida)
-                print(f"Divida {nome} deletada.")
-                return
-        print("Divida não encontrada.")
+    def deletar_divida(self, nome, finance_id=1):
+        try:
+            cur.execute("DELETE FROM finances WHERE nome = %s AND finance_id = %s", (nome, finance_id))
+            conn.commit()
+            print(f"Dívida {nome} deletada.")
+        except Exception as e:
+            print("Error:", e)
+            conn.rollback()
 
-    def deletar_provento(self, nome):
-        for provento in self.proventos:
-            if provento.nome == nome:
-                self.proventos.remove(provento)
-                print(f"Provento {nome} deletado.")
-                return
-        print("Provento não encontrado.")
+    def deletar_provento(self, nome, finance_id=2):
+        try:
+            cur.execute("DELETE FROM finances WHERE nome = %s AND finance_id = %s", (nome, finance_id))
+            conn.commit()
+            print(f"Provento {nome} deletado.")
+        except Exception as e:
+            print("Error:", e)
+            conn.rollback()
 
-    def calcular_saldo(self):
-        saldo = sum(provento.valor for provento in self.proventos) - sum(divida.valor for divida in self.dividas)
-        return saldo
-    
-    ## Mudarei pra SQL
-    def salvar_contas(self):
-        with open('Perfis.txt', 'w') as arq:
-            arq.write('Dividas:\n')
-            for divida in self.dividas:
-                arq.write(f"{divida.nome}: {divida.valor}\n")
-            arq.write('\nProventos:\n')
-            for provento in self.proventos:
-                arq.write(f"{provento.nome}: {provento.valor}\n")
+
+    def calcular_saldo(self, finance_id=1):
+        try:
+            cur.execute("SELECT SUM(CASE WHEN finance_id = %s THEN valor ELSE -valor END) AS saldo FROM finances", (finance_id,))
+            saldo = cur.fetchone()[0]
+            print(f"Saldo: R${saldo}")
+        except Exception as e:
+            print("Error:", e)
+
     ## Metas financeiras função futura
     def definir_metas(self):
         pass
@@ -155,3 +181,7 @@ def menu(financeiro):
 if __name__ == '__main__':
     financeiro = Financas()
     menu(financeiro)
+
+    # Feche o cursor e a conexão
+    cur.close()
+    conn.close()
